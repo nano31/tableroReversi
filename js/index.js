@@ -1,5 +1,5 @@
 
- var discs = [
+var discs = [
     [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
@@ -14,8 +14,10 @@ let rows;
 let columns;
 const cellSize = 60;
 const gap = 2;
-let turn = 1;
+let id = 1;
 let scoreLabel;
+//let discLayer;
+let gameOver =false;
 
 window.onload = function(){
     scoreLabel = document.getElementById("score");
@@ -24,7 +26,6 @@ window.onload = function(){
     drawGreenSquares(rows,columns,cellSize,gap);
 
     let discLayer = document.getElementById("discLayer");
-   
 
     drawDiscs();
 };
@@ -44,27 +45,46 @@ function drawGreenSquares(){
 //agrega fichas en el tablero, e intercambia los turnos.
 function clickedSquare(row, column){
     
+    if(gameOver){ return;}
+
     if(discs[row][column] != 0){
         return;
     }
     console.log("el lugar esta libre")
 
-    if(canClickSpot(row,column) === true){
+    if(canClickSpot(id,row,column) === true){
         console.log("click spot")
-        let affectedDiscs = getAffectedDiscs(row,column);
+        let affectedDiscs = getAffectedDiscs(id,row,column);
         flipDiscs(affectedDiscs);
 
-        discs[row][column] = turn;
-        if(turn == 1){
-            turn = 2;
-        }else{
-            turn = 1;
+        discs[row][column] = id;
+        if(id == 1 && canMove(2)){
+            id = 2;
+        }else if(id == 2 && canMove(1)){
+            id = 1;
         }
+
+        if (canMove(1) == false && canMove(2) == false){
+            alert("game over");
+            gameOver = true;
+        }
+
         drawDiscs();
         redrawScore();
     }else{
         return;
     }
+}
+
+function canMove(id){
+    for (let row = 0; row < 8; row++){
+        for(let column = 0; column < 8; column++){
+            if (canClickSpot(id,row,column)){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function redrawScore(){
@@ -83,7 +103,7 @@ function redrawScore(){
     scoreLabel.innerHTML = "Black: "+player1+" White: "+player2;
 }
 
-function getAffectedDiscs(row,column){
+function getAffectedDiscs(id,row,column){
     /**obtiene las fichas afectadas por la nueva ficha ingresada en el tablero */
     let affectedDiscs = [];
     
@@ -93,8 +113,8 @@ function getAffectedDiscs(row,column){
     while(columnIterator < 8){
         columnIterator++;
         let valueAtSpot = discs[row][columnIterator];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -110,8 +130,8 @@ function getAffectedDiscs(row,column){
     while(columnIterator < 8){
         columnIterator--;
         let valueAtSpot = discs[row][columnIterator];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -127,8 +147,8 @@ function getAffectedDiscs(row,column){
     while(rowIterator > 0){
         rowIterator--;
         let valueAtSpot = discs[rowIterator][column];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -144,8 +164,8 @@ function getAffectedDiscs(row,column){
     while(rowIterator < 8){
         rowIterator++;
         let valueAtSpot = discs[rowIterator][column];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -164,8 +184,8 @@ function getAffectedDiscs(row,column){
         rowIterator++;
         columnIterator++;
         let valueAtSpot = discs[rowIterator][columnIterator];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -183,8 +203,8 @@ function getAffectedDiscs(row,column){
         rowIterator++;
         columnIterator--;
         let valueAtSpot = discs[rowIterator][columnIterator];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -202,8 +222,8 @@ function getAffectedDiscs(row,column){
         rowIterator--;
         columnIterator--;
         let valueAtSpot = discs[rowIterator][columnIterator];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -221,8 +241,8 @@ function getAffectedDiscs(row,column){
         rowIterator--;
         columnIterator++;
         let valueAtSpot = discs[rowIterator][columnIterator];
-        if(valueAtSpot == 0 || valueAtSpot == turn){
-            if(valueAtSpot == turn){
+        if(valueAtSpot == 0 || valueAtSpot == id){
+            if(valueAtSpot == id){
                 affectedDiscs = affectedDiscs.concat(couldBeAffected);
             }
             break;
@@ -235,9 +255,9 @@ function getAffectedDiscs(row,column){
     return affectedDiscs;
 }
 
-function canClickSpot(row,column){
+function canClickSpot(id,row,column){
 /*indica si el lugar donde se realizo el click es uno permitido*/
-    let affectedDiscs = getAffectedDiscs(row,column);
+    let affectedDiscs = getAffectedDiscs(id,row,column);
     if(affectedDiscs.length == 0){
         return false;
     }else{
