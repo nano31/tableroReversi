@@ -1,3 +1,16 @@
+html {
+    box-sizing: border-box;
+}
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: sans-serif;
+}
 #blackBackground{
     height: 500px;
     width: 500px;
@@ -17,3 +30,5 @@
     color: #fff;
     text-align: center;
 }
+
+

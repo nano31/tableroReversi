@@ -15,13 +15,13 @@ const gap = 2;
 let blackBackground;
 let discLayer;
 let scoreLabel;
-let gameOver = false;
+let gameOver;
 let canMoveLayer;
 
 window.onload = function(){
     blackBackground = document.getElementById('blackBackground');
     blackBackground.setAttribute('style',`width:${cellSize*8 + gap*9}px; height:${cellSize*8+gap*9}px;`);
-    discLayer = document.getElementById('discLayer');
+    discLayer = document.querySelector('.piece');
     drawGreenSquares();
     
     canMoveLayer = document.getElementById("canMoveLayer");
@@ -212,7 +212,6 @@ function getAffectedDiscs(id,row,column){
 
 let turn = 1;
 function drawDiscs(){
-    console.log("creo los dicsos")
     discLayer.innerHTML = "";
     for(rows = 0; rows < 8; rows++){
         for(columns = 0; columns < 8; columns++){
@@ -269,6 +268,7 @@ function redrawScore(){
 //y luego coloca la ficha del color que le corresponda.
 function clickedSquare(row, column){
     if(gameOver){
+        console.log('Game Over:'+gameOver);
         return;       
     }//controla que el juego no se haya terminado
 
@@ -276,8 +276,7 @@ function clickedSquare(row, column){
         return;
     }
     //console.log("el lugar esta libre")
-    if(canClickSpot(turn,row,column) === true){
-        console.log("click spot")
+    if(canClickSpot(turn,row,column) == true && !gameOver){
         let affectedDiscs = getAffectedDiscs(turn,row,column);
         flipDiscs(affectedDiscs);
         discs[row][column] = turn;
@@ -290,6 +289,8 @@ function clickedSquare(row, column){
         if(!canMove(1)  && !canMove(2)){
             alert("Game Over");
             gameOver = true;
+        }else{
+            gameOver = false;
         }
         drawDiscs();
         drawCanMoveLayer();
