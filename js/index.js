@@ -1,5 +1,5 @@
 
-var discs = [
+let discs = [
     [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
@@ -10,20 +10,19 @@ var discs = [
     [0,0,0,0,0,0,0,0],
 ];
 
+
 let rows;
 let columns;
 const cellSize = 60;
 const gap = 2;
-let id = 1;
+let turn = 1;
 let scoreLabel;
-//let discLayer;
-let gameOver =false;
 
 window.onload = function(){
     scoreLabel = document.getElementById("score");
     const blackBackground = document.getElementById("blackBackground");
     blackBackground.setAttribute('style', `width:${cellSize*8 + gap*9}px; height:${cellSize*8 + gap*9}px;`);
-    drawGreenSquares(rows,columns,cellSize,gap);
+    drawGreenSquares();
 
     let discLayer = document.getElementById("discLayer");
 
@@ -45,46 +44,27 @@ function drawGreenSquares(){
 //agrega fichas en el tablero, e intercambia los turnos.
 function clickedSquare(row, column){
     
-    if(gameOver){ return;}
-
     if(discs[row][column] != 0){
         return;
     }
     console.log("el lugar esta libre")
 
-    if(canClickSpot(id,row,column) === true){
+    if(canClickSpot(row,column) === true){
         console.log("click spot")
-        let affectedDiscs = getAffectedDiscs(id,row,column);
+        let affectedDiscs = getAffectedDiscs(row,column);
         flipDiscs(affectedDiscs);
 
         discs[row][column] = id;
-        if(id == 1 && canMove(2)){
+        if(id == 1){
             id = 2;
-        }else if(id == 2 && canMove(1)){
+        }else{
             id = 1;
         }
-
-        if (canMove(1) == false && canMove(2) == false){
-            alert("game over");
-            gameOver = true;
-        }
-
         drawDiscs();
         redrawScore();
     }else{
         return;
     }
-}
-
-function canMove(id){
-    for (let row = 0; row < 8; row++){
-        for(let column = 0; column < 8; column++){
-            if (canClickSpot(id,row,column)){
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 function redrawScore(){
@@ -103,7 +83,7 @@ function redrawScore(){
     scoreLabel.innerHTML = "Black: "+player1+" White: "+player2;
 }
 
-function getAffectedDiscs(id,row,column){
+function getAffectedDiscs(row,column){
     /**obtiene las fichas afectadas por la nueva ficha ingresada en el tablero */
     let affectedDiscs = [];
     
@@ -122,7 +102,7 @@ function getAffectedDiscs(id,row,column){
             let discLocation = {row:row, column: columnIterator};
             couldBeAffected.push(discLocation);
         }
-    }
+}
 
     //to the left
     couldBeAffected = [];
@@ -144,7 +124,7 @@ function getAffectedDiscs(id,row,column){
     //above
     couldBeAffected = [];
     let rowIterator = row;
-    while(rowIterator > 0){
+    while(rowIterator >= 0){
         rowIterator--;
         let valueAtSpot = discs[rowIterator][column];
         if(valueAtSpot == 0 || valueAtSpot == id){
@@ -180,7 +160,7 @@ function getAffectedDiscs(id,row,column){
     couldBeAffected = [];
     rowIterator = row;
     columnIterator = column;
-    while(rowIterator < 7 && columnIterator < 7){
+    while(rowIterator < 8 && columnIterator < 8){
         rowIterator++;
         columnIterator++;
         let valueAtSpot = discs[rowIterator][columnIterator];
@@ -199,7 +179,7 @@ function getAffectedDiscs(id,row,column){
     couldBeAffected = [];
     rowIterator = row;
     columnIterator = column;
-    while(rowIterator < 7 && columnIterator > 0){
+    while(rowIterator < 8 && columnIterator >= 0){
         rowIterator++;
         columnIterator--;
         let valueAtSpot = discs[rowIterator][columnIterator];
@@ -218,7 +198,7 @@ function getAffectedDiscs(id,row,column){
     couldBeAffected = [];
     rowIterator = row;
     columnIterator = column;
-    while(rowIterator > 0 && columnIterator > 0){
+    while(rowIterator >= 0 && columnIterator >= 0){
         rowIterator--;
         columnIterator--;
         let valueAtSpot = discs[rowIterator][columnIterator];
@@ -237,7 +217,7 @@ function getAffectedDiscs(id,row,column){
     couldBeAffected = [];
     rowIterator = row;
     columnIterator = column;
-    while(rowIterator > 0 && columnIterator < 7){
+    while(rowIterator >= 0 && columnIterator < 8){
         rowIterator--;
         columnIterator++;
         let valueAtSpot = discs[rowIterator][columnIterator];
@@ -255,9 +235,9 @@ function getAffectedDiscs(id,row,column){
     return affectedDiscs;
 }
 
-function canClickSpot(id,row,column){
+function canClickSpot(row,column){
 /*indica si el lugar donde se realizo el click es uno permitido*/
-    let affectedDiscs = getAffectedDiscs(id,row,column);
+    let affectedDiscs = getAffectedDiscs(row,column);
     if(affectedDiscs.length == 0){
         return false;
     }else{
@@ -276,28 +256,4 @@ function flipDiscs(affectedDiscs){
         }
     }
 
-}
-
-function drawDiscs(){
-    console.log("creo los dicsos")
-    
-    discLayer.innerHTML = "";
-    for(rows = 0; rows < 8; rows++){
-        for(columns = 0; columns < 8; columns++){
-            let disc = document.createElement("div");
-            let value = discs[rows][columns];
-            if(value == 0){
-
-            }else{
-                disc.setAttribute('style', `position: absolute; height: ${cellSize}px; width: ${cellSize}px; top: ${(cellSize+gap)*rows+gap}px; left:${(cellSize+gap)*columns+gap}px; border-radius: 50%;`);
-
-                if(value == 1){
-                    disc.style.background = "black";
-                }else if(value == 2){
-                    disc.style.background = "white";
-                }
-            }
-            discLayer.appendChild(disc);
-        }
-    }
 }
